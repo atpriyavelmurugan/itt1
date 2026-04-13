@@ -1,0 +1,5 @@
+a=int(input("Enter a number:"))
+b=int(input("Enter a number:"))
+c=input("Enter a operation:")
+result= a+b if c=="+" else (a-b if c=="-" else(a*b if c=="*" else a/b))
+print(result)
