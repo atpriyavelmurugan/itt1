@@ -1,0 +1,27 @@
+SELECT 
+    con.contest_id, 
+    con.hacker_id, 
+    con.name, 
+    SUM(COALESCE(sg.s_sub, 0)), 
+    SUM(COALESCE(sg.s_acc, 0)), 
+    SUM(COALESCE(vg.s_view, 0)), 
+    SUM(COALESCE(vg.s_uview, 0)) 
+FROM Contests con 
+JOIN Colleges col ON con.contest_id = col.contest_id 
+JOIN Challenges cha ON col.college_id = cha.college_id 
+LEFT JOIN (
+    SELECT challenge_id, SUM(total_submissions) s_sub, SUM(total_accepted_submissions) s_acc 
+    FROM Submission_Stats GROUP BY challenge_id
+) sg ON cha.challenge_id = sg.challenge_id 
+LEFT JOIN (
+    SELECT challenge_id, SUM(total_views) s_view, SUM(total_unique_views) s_uview 
+    FROM View_Stats GROUP BY challenge_id
+) vg ON cha.challenge_id = vg.challenge_id 
+GROUP BY con.contest_id, con.hacker_id, con.name 
+HAVING (
+    SUM(COALESCE(sg.s_sub, 0)) + 
+    SUM(COALESCE(sg.s_acc, 0)) + 
+    SUM(COALESCE(vg.s_view, 0)) + 
+    SUM(COALESCE(vg.s_uview, 0))
+) > 0 
+ORDER BY con.contest_id;
