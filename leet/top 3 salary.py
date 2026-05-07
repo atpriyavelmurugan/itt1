@@ -1,0 +1,1 @@
+select d.name as Department,e.name as Employee,salary from Employee e join Department d on e.departmentId=d.id where 3>(select count(distinct g.salary) from Employee as g where g.salary>e.salary and g.departmentId = e.departmentId) order by 1,3 desc;
